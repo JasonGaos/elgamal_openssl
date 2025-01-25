@@ -87,6 +87,36 @@ void test_elgamal_performance(PointConversionForm form) {
     EC_GROUP_free(params.group);
 }
 
+
+void test_encZero(){
+    uint64_t setSize = 1<<18;
+    
+    // Create a new EC group for the secp256r1 curve
+    EC_GROUP* group = create_group(NID_X9_62_prime256v1);
+    if (group == nullptr) {
+        std::cerr << "Failed to create EC group for curve secp256r1 (NIST P-256)" << std::endl;
+        return;
+    }
+
+    // Setup parameters
+    ElGamalParams params = setup_elgamal(group);
+
+    // Generate key pair
+    ElGamalKeyPair keypair = generate_keypair(params);
+    
+    std::chrono::duration<double, std::milli> zero_time(0);
+
+
+    auto start = std::chrono::steady_clock::now();
+
+    std::vector<ElGamalCiphertext> encZeros = fasterEncZero(params, setSize, keypair.public_key);
+
+    auto end = std::chrono::steady_clock::now();
+    zero_time += end-start;
+
+    std::cout << "Average Enc Zero time: " << zero_time.count() / setSize << " ms\n";
+}
+
 int main() {
     // Initialize OpenSSL
     initialize_openssl();
@@ -96,6 +126,8 @@ int main() {
 
     // Test performance with compressed format
     test_elgamal_performance(COMPRESSED);
+
+    test_encZero();
 
     return 0;
 }
