@@ -16,6 +16,19 @@ set(SOURCES
     src/ec_elgamal.cpp
 )
 
+# Build the library
+add_library(ECElGamal STATIC ${SOURCES})
+target_link_libraries(ECElGamal OpenSSL::Crypto)
+
+# Install the library and include files
+install(TARGETS ECElGamal
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+)
+
+install(DIRECTORY include/ DESTINATION include)
+
 # Main executable
 add_executable(main src/main.cpp ${SOURCES})
 target_link_libraries(main OpenSSL::Crypto)
@@ -26,3 +39,4 @@ target_link_libraries(test_curve OpenSSL::Crypto)
 
 add_executable(test_elgamal test/test_elgamal.cpp ${SOURCES})
 target_link_libraries(test_elgamal OpenSSL::Crypto)
+
