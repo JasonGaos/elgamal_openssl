@@ -14,6 +14,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 set(SOURCES
     src/ec_curve.cpp
     src/ec_elgamal.cpp
+    src/ec_encoding.cpp   # <-- add new encoding source
 )
 
 # Build the library
@@ -30,13 +31,16 @@ install(TARGETS ECElGamal
 install(DIRECTORY include/ DESTINATION include)
 
 # Main executable
-add_executable(main src/main.cpp ${SOURCES})
-target_link_libraries(main OpenSSL::Crypto)
+add_executable(main src/main.cpp)
+target_link_libraries(main ECElGamal OpenSSL::Crypto)
 
-# Test executable
-add_executable(test_curve test/test_curve.cpp ${SOURCES})
-target_link_libraries(test_curve OpenSSL::Crypto)
+# Test executables
+add_executable(test_curve test/test_curve.cpp)
+target_link_libraries(test_curve ECElGamal OpenSSL::Crypto)
 
-add_executable(test_elgamal test/test_elgamal.cpp ${SOURCES})
-target_link_libraries(test_elgamal OpenSSL::Crypto)
+add_executable(test_elgamal test/test_elgamal.cpp)
+target_link_libraries(test_elgamal ECElGamal OpenSSL::Crypto)
 
+# New encoding test
+add_executable(test_encoding test/test_encoding.cpp)
+target_link_libraries(test_encoding ECElGamal OpenSSL::Crypto)
